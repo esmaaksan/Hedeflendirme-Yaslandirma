@@ -3,11 +3,20 @@ import math
 from flask import Flask, render_template, request, redirect, url_for
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import os
+import shutil
+
 
 app = Flask(__name__)
 
-# --- YAPILANDIRMA ---
-DB_PATH = "finans.db"
+DB_DIR = os.getenv("RAILWAY_VOLUME_MOUNT_PATH", "/Hedeflendirme/data")
+DB_PATH = os.path.join(DB_DIR, "finans.db")
+
+if not os.path.exists(DB_DIR):
+    os.makedirs(DB_DIR)
+
+if not os.path.exists(DB_PATH) and os.path.exists("finans.db"):
+    shutil.copy("finans.db", DB_PATH)
 
 # --- VERİTABANI YARDIMCILARI ---
 def get_db_connection():
