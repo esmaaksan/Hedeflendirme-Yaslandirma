@@ -12,11 +12,13 @@ app = Flask(__name__)
 DB_DIR = os.getenv("RAILWAY_VOLUME_MOUNT_PATH", "/Hedeflendirme/data")
 DB_PATH = os.path.join(DB_DIR, "finans.db")
 
-if not os.path.exists(DB_DIR):
-    os.makedirs(DB_DIR)
+# klasör yoksa oluştur
+os.makedirs(DB_DIR, exist_ok=True)
 
-if not os.path.exists(DB_PATH) and os.path.exists("finans.db"):
-    shutil.copy("finans.db", DB_PATH)
+# ilk deploy ise local db'yi volume'e taşı
+if not os.path.exists(DB_PATH):
+    if os.path.exists("finans.db"):
+        shutil.copy2("finans.db", DB_PATH)
 
 # --- VERİTABANI YARDIMCILARI ---
 def get_db_connection():
