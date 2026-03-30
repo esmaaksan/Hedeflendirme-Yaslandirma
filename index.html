@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proje Finansal Takip Paneli</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #eef2f7;
+            margin: 0;
+            color: #333;
+        }
+
+        /* 🔹 SAYFA ORTALAMA */
+        .wrapper {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        /* 🔹 BAŞLIK */
+        h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #2c3e50;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* 🔹 ANA CONTAINER */
+        .container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        /* 🔹 TABLO KART */
+        .table-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            flex: 1; /* Tabloyu genişletir */
+        }
+
+        /* 🔹 TABLO */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+        }
+
+        /* 🔹 HEADER */
+        th {
+            background: #2c3e50;
+            color: white;
+            font-weight: 500;
+            font-size: 14px;
+            border-bottom: 2px solid #34495e;
+        }
+
+        /* 🔹 SATIRLAR */
+        tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:last-child {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #f8fbff;
+        }
+
+        /* 🔹 LINK */
+        a {
+            text-decoration: none;
+            color: #2980b9;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        a:hover {
+            color: #1a5276;
+            text-decoration: underline;
+        }
+
+        /* 🔹 DURUM RENKLERİ */
+        .pozitif {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .negatif {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        /* 🔹 ORAN ROZETİ */
+        .oran-badge {
+            background: #f1f3f5;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+
+        /* 🔹 SAĞ PANEL */
+        .sidebar {
+            background: white;
+            padding: 25px;
+            width: 300px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .sidebar h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 18px;
+            border-bottom: 2px solid #eef2f7;
+            padding-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2980b9;
+            box-shadow: 0 0 5px rgba(41, 128, 185, 0.2);
+        }
+
+        /* 🔹 BUTONLAR */
+        button {
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .btn-save {
+            background: #2980b9;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #1f6391;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-upload {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-upload:hover {
+            background: #219150;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Dosya seçim inputunu gizle */
+        #file-input {
+            display: none;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        <h2>PROJE FİNANSAL YÖNETİM PANELİ</h2>
+
+        <div class="container">
+
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>PROJE ADI</th>
+                            <th>TOPLAM TAHSİLAT</th>
+                            <th>DURUM (FARK)</th>
+                            <th>DURUM ORANI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for satir in tablo %}
+                        <tr>
+                            <td>
+                                <a href="/proje/{{ satir.proje }}">
+                                    {{ satir.proje }}
+                                </a>
+                            </td>
+
+                            <td style="font-weight: 500;">{{ satir.tahsilat }}</td>
+                            
+                            <td class="{{ 'negatif' if '-' in satir.durum else 'pozitif' }}">
+                                {{ satir.durum }}
+                            </td>
+                            
+                            <td>
+                                <span class="oran-badge">{{ satir.durum_orani }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="sidebar">
+    
+    <h3>Yeni Proje Ekle</h3>
+    <form method="post" action="/"> <label>Proje Adı</label>
+        <input type="text" name="proje_adi" placeholder="" required>
+
+        <label>Başlangıç Tarihi</label>
+        <input type="date" name="baslangic" required>
+
+        <button type="submit" class="btn-save">Sisteme Kaydet</button>
+    </form>
+
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
+
+    <h3>Veri Aktar (Excel)</h3>
+    <form action="/yukle" method="post" enctype="multipart/form-data">
+        <label>Hangi Ayın Verisi?</label>
+        <input type="month" name="hedef_tarih" required> 
+
+        <label>Dosya Seçin</label>
+        <input type="file" name="file" accept=".xlsx, .xls" required 
+               style="border: 1px dashed #27ae60; padding: 10px; background: #f9fffb;">
+        
+        <button type="submit" class="btn-upload" style="margin-top: 10px;">
+            Güncelle
+        </button>
+    </form>
+    
+    <p style="font-size: 11px; color: #888; text-align: center; margin-top: 10px;">
+        * Sadece girdiğiniz tarihle eşleşen satırlar güncellenir. <br>
+        * Eski verileriniz ve manuel oranlarınız korunur.
+    </p>
+</div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
